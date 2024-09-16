@@ -24,6 +24,11 @@ const fetchBuildingInfo = async (
       }
     }
   );
+
+  if (data.response.body.totalCount === 0 || !data.response.body.items.item) {
+    throw new Error('No building information found for the given address.');
+  }
+
   return data.response.body.items.item;
 };
 
@@ -37,5 +42,6 @@ export const useBuildingInfo = (
   return useQuery({
     queryKey: ['buildingInfo', sigunguCd, bjdongCd, platGbCd, bun, ji],
     queryFn: () => fetchBuildingInfo(sigunguCd, bjdongCd, platGbCd, bun, ji),
+    enabled: !!sigunguCd && !!bjdongCd && !!platGbCd && !!bun && !!ji,
   });
 };

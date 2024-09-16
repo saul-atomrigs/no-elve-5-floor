@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBuildingInfo } from '../../hooks/useBuildingInfo';
+import addressData from '../../assets/addressData.json';
 
 export default function HomeScreen() {
   const [address, setAddress] = useState('');
@@ -23,22 +24,46 @@ export default function HomeScreen() {
   );
 
   const handleAddressSubmit = () => {
-    // TODO: Implement address parsing logic here
-    // For now, we'll use a dummy implementation
-    const dummyParse = (address: string) => {
-      // This is a placeholder. In a real implementation, you'd parse the address
-      // and return the correct parameters.
-      return {
-        sigunguCd: '11710',
-        bjdongCd: '10600',
-        platGbCd: '0',
-        bun: '0171',
-        ji: '0016',
-      };
-    };
+    const parsedAddress = parseAddress(address);
+    if (parsedAddress) {
+      const params = convertToApiParams(parsedAddress);
+      setBuildingParams(params);
+    } else {
+      Alert.alert('주소 오류', '올바른 주소를 입력해주세요.');
+    }
+  };
 
-    const params = dummyParse(address);
-    setBuildingParams(params);
+  const parseAddress = (address: string) => {
+    const regex = /^(.+)\s(\d+)(-(\d+))?$/;
+    const match = address.match(regex);
+    if (match) {
+      return {
+        dongName: match[1],
+        bun: match[2],
+        ji: match[4] || '0'
+      };
+    }
+    return null;
+  };
+
+  const convertToApiParams = (parsedAddress: { dongName: string; bun: string; ji: string }) => {
+    const dongInfo = addressData.find(item => 
+      item.법정동명.includes(parsedAddress.dongName) && item.폐지여부 === "존재"
+    );
+
+    if (dongInfo) {
+      const code = dongInfo.법정동코드.toString();
+      return {
+        sigunguCd: code.slice(0, 5),
+        bjdongCd: code.slice(5, 10),
+        platGbCd: '0', // 일반 지번
+        bun: parsedAddress.bun.padStart(4, '0'),
+        ji: parsedAddress.ji.padStart(4, '0')
+      };
+    }
+
+    Alert.alert('주소 오류', '해당 주소를 찾을 수 없습니다.');
+    return null;
   };
 
   return (
@@ -67,7 +92,10 @@ export default function HomeScreen() {
             <Text style={styles.cardTitle}>{buildingInfo.newPlatPlc}</Text>
             <Text style={styles.cardTitleSub}>{buildingInfo.platPlc}</Text>
             <Text>층수: {buildingInfo.grndFlrCnt}층</Text>
-            <Text style={styles.warningText}>
+            <Text style={[
+              styles.warningText,
+              buildingInfo.rideUseElvtCnt > 0 ? styles.blueText : null
+            ]}>
               엘리베이터: {buildingInfo.rideUseElvtCnt > 0 ? '있음' : '없음'} 
               {buildingInfo.rideUseElvtCnt === 0 && <Ionicons name="warning" size={16} color="red" />}
             </Text>
@@ -138,6 +166,9 @@ const styles = StyleSheet.create({
   },
   warningText: {
     color: 'red',
+  },
+  blueText: {
+    color: 'blue',
   },
   mapButton: {
     backgroundColor: '#3B82F6',
