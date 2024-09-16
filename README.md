@@ -2,6 +2,7 @@
 
 ## 0.0.2 (2024-09-16)
 - 데이터 패칭 로직 추가 (`hooks/useBuildingInfo.ts`) w/ `react-query`, `axios`
+- 입력창 로직 추가
 
 ## 0.0.1 (2024-09-16)
 

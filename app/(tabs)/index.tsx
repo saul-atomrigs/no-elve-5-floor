@@ -1,19 +1,55 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBuildingInfo } from '../../hooks/useBuildingInfo';
 
 export default function HomeScreen() {
-  // const { data: buildingInfo, isLoading, error } = useBuildingInfo('11680', '10300', '0', '0012', '0000');
-  const { data: buildingInfo, isLoading, error } = useBuildingInfo('11710', '10600', '0', '0171', '0016');
+  const [address, setAddress] = useState('');
+  const [buildingParams, setBuildingParams] = useState({
+    sigunguCd: '',
+    bjdongCd: '',
+    platGbCd: '',
+    bun: '',
+    ji: '',
+  });
+
+  const { data: buildingInfo, isLoading, error } = useBuildingInfo(
+    buildingParams.sigunguCd,
+    buildingParams.bjdongCd,
+    buildingParams.platGbCd,
+    buildingParams.bun,
+    buildingParams.ji
+  );
+
+  const handleAddressSubmit = () => {
+    // TODO: Implement address parsing logic here
+    // For now, we'll use a dummy implementation
+    const dummyParse = (address: string) => {
+      // This is a placeholder. In a real implementation, you'd parse the address
+      // and return the correct parameters.
+      return {
+        sigunguCd: '11710',
+        bjdongCd: '10600',
+        platGbCd: '0',
+        bun: '0171',
+        ji: '0016',
+      };
+    };
+
+    const params = dummyParse(address);
+    setBuildingParams(params);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* 상단 주소 입력 필드 */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
           placeholder="건물 주소 입력 또는 음성으로 검색"
+          value={address}
+          onChangeText={setAddress}
+          onSubmitEditing={handleAddressSubmit}
         />
         <TouchableOpacity style={styles.micButton}>
           <Ionicons name="mic" size={24} color="black" />
