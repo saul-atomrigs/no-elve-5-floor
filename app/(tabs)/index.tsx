@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBuildingInfo } from '../../hooks/useBuildingInfo';
 import addressData from '../../assets/addressData.json';
+import axios from 'axios';
 
 export default function HomeScreen() {
   const [address, setAddress] = useState('');
@@ -23,43 +24,105 @@ export default function HomeScreen() {
     buildingParams.ji
   );
 
-  const handleAddressSubmit = () => {
-    const parsedAddress = parseAddress(address);
-    if (parsedAddress) {
-      const params = convertToApiParams(parsedAddress);
-      setBuildingParams(params);
-    } else {
-      Alert.alert('주소 오류', '올바른 주소를 입력해주세요.');
+  const handleAddressSubmit = async () => {
+    try {
+      const parsedAddress = await parseAddress(address);
+      console.log('parsedAddress', parsedAddress);
+      if (parsedAddress) {
+        const params = convertToApiParams(parsedAddress);
+        console.log('params', params);
+        setBuildingParams(params);
+      } else {
+        Alert.alert('주소 오류', '올바른 주소를 입력해주세요.');
+      }
+    } catch (error) {
+      Alert.alert('오류', '주소 처리 중 오류가 발생했습니다.');
     }
   };
 
-  const parseAddress = (address: string) => {
-    const regex = /^(.+)\s(\d+)(-(\d+))?$/;
-    const match = address.match(regex);
-    if (match) {
+  const parseAddress = async (address: string) => {
+    const jibunRegex = /^(.+동)\s*(\d+)(-(\d+))?$/;
+    const jibunMatch = address.match(jibunRegex);
+    
+    if (jibunMatch) {
+      console.log('jibunMatch', jibunMatch);
       return {
-        dongName: match[1],
-        bun: match[2],
-        ji: match[4] || '0'
+        dongName: jibunMatch[1],
+        bun: jibunMatch[2],
+        ji: jibunMatch[4] || '0'
       };
+    } else {
+      // 도로명주소 처리
+      const response = await axios.get('https://business.juso.go.kr/addrlink/addrLinkApi.do', {
+        params: {
+          confmKey: 'U01TX0FVVEgyMDI0MDkxNjIxMTE0MDExNTA4ODc=',
+          currentPage: 1,
+          countPerPage: 1,
+          keyword: address,
+          resultType: 'json'
+        }
+      });
+
+      console.log('response 도로명', response);
+
+      if (response.data.results.juso && response.data.results.juso.length > 0) {
+        const juso = response.data.results.juso[0];
+        const jibunAddr = juso.jibunAddr;
+        console.log('jibunAddr', jibunAddr);
+        
+        // 동 이름과 번지수만 추출하는 정규표현식
+        const extractRegex = /(\S+동)\s+(\d+(?:-\d+)?)/;
+        const extractMatch = jibunAddr.match(extractRegex);
+        
+        if (extractMatch) {
+          const [, dongName, fullNumber] = extractMatch;
+          const [bun, ji = '0'] = fullNumber.split('-');
+          
+          return {
+            sigunguCd: juso.admCd.slice(0, 5),
+            bjdongCd: juso.admCd.slice(5, 10),
+            dongName,
+            bun,
+            ji
+          };
+        }
+      }
     }
     return null;
   };
 
-  const convertToApiParams = (parsedAddress: { dongName: string; bun: string; ji: string }) => {
-    const dongInfo = addressData.find(item => 
-      item.법정동명.includes(parsedAddress.dongName) && item.폐지여부 === "존재"
-    );
-
-    if (dongInfo) {
-      const code = dongInfo.법정동코드.toString();
+  const convertToApiParams = (parsedAddress: { 
+    sigunguCd?: string; 
+    bjdongCd?: string; 
+    dongName: string; 
+    bun: string; 
+    ji: string 
+  }) => {
+    if (parsedAddress.sigunguCd && parsedAddress.bjdongCd) {
+      // 도로명주소의 경우 (API 응답에서 이미 코드를 받아옴)
       return {
-        sigunguCd: code.slice(0, 5),
-        bjdongCd: code.slice(5, 10),
+        sigunguCd: parsedAddress.sigunguCd,
+        bjdongCd: parsedAddress.bjdongCd,
         platGbCd: '0', // 일반 지번
         bun: parsedAddress.bun.padStart(4, '0'),
         ji: parsedAddress.ji.padStart(4, '0')
       };
+    } else {
+      // 지번주소의 경우 (기존 로직)
+      const dongInfo = addressData.find(item => 
+        item.법정동명.includes(parsedAddress.dongName) && item.폐지여부 === "존재"
+      );
+
+      if (dongInfo) {
+        const code = dongInfo.법정동코드.toString();
+        return {
+          sigunguCd: code.slice(0, 5),
+          bjdongCd: code.slice(5, 10),
+          platGbCd: '0', // 일반 지번
+          bun: parsedAddress.bun.padStart(4, '0'),
+          ji: parsedAddress.ji.padStart(4, '0')
+        };
+      }
     }
 
     Alert.alert('주소 오류', '해당 주소를 찾을 수 없습니다.');

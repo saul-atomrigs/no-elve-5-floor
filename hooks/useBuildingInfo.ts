@@ -29,6 +29,7 @@ const fetchBuildingInfo = async (
     throw new Error('No building information found for the given address.');
   }
 
+  console.log('data.response.body.items.item', data.response.body.items.item);
   return data.response.body.items.item;
 };
 

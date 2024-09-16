@@ -1,5 +1,8 @@
 # Versioning (CHANGELOG)
 
+## 0.0.3 (2024-09-16)
+- 입력창 로직 추가 (도로명주소)
+
 ## 0.0.2 (2024-09-16)
 - 데이터 패칭 로직 추가 (`hooks/useBuildingInfo.ts`) w/ `react-query`, `axios`
 - 입력창 로직 추가 (번지수주소)
