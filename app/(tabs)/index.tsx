@@ -146,14 +146,14 @@ export default function HomeScreen() {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="건물 주소 입력 또는 음성으로 검색"
+          placeholder="송파동 123-45, 신림로 67"
           value={address}
           onChangeText={setAddress}
           onSubmitEditing={handleAddressSubmit}
         />
-        <TouchableOpacity style={styles.micButton}>
+        {/* <TouchableOpacity style={styles.micButton}>
           <Ionicons name="mic" size={24} color="black" />
-        </TouchableOpacity>
+        </TouchableOpacity> */}
       </View>
 
       {/* 건물 정보 카드 */}
@@ -176,14 +176,14 @@ export default function HomeScreen() {
             </Text>
           </View>
         ) : (
-          <Text>No building information available</Text>
+          <Text>위 검색창에서 주소를 입력해주세요</Text>
         )}
       </View>
 
       {/* 지도 보기 버튼 */}
-      <TouchableOpacity style={styles.mapButton}>
+      {/* <TouchableOpacity style={styles.mapButton}>
         <Text style={styles.mapButtonText}>지도에서 보기</Text>
-      </TouchableOpacity>
+      </TouchableOpacity> */}
     </SafeAreaView>
   );
 }
@@ -203,6 +203,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderWidth: 1,
     borderColor: 'gray',
+    backgroundColor: 'white',
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 8,

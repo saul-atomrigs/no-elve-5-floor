@@ -26,7 +26,7 @@ const fetchBuildingInfo = async (
   );
 
   if (data.response.body.totalCount === 0 || !data.response.body.items.item) {
-    throw new Error('No building information found for the given address.');
+    throw new Error('아무 주소도 찾지 못했습니다. 다시 입력해주세요.');
   }
 
   console.log('data.response.body.items.item', data.response.body.items.item);
