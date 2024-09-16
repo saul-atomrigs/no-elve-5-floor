@@ -31,11 +31,16 @@ export default function HomeScreen() {
       if (parsedAddress) {
         const params = convertToApiParams(parsedAddress);
         console.log('params', params);
-        setBuildingParams(params);
+        if (params) {
+          setBuildingParams(params);
+        } else {
+          Alert.alert('주소 오류', '주소를 변환하는 데 실패했습니다.');
+        }
       } else {
         Alert.alert('주소 오류', '올바른 주소를 입력해주세요.');
       }
     } catch (error) {
+      console.error('Address processing error:', error);
       Alert.alert('오류', '주소 처리 중 오류가 발생했습니다.');
     }
   };
@@ -123,10 +128,17 @@ export default function HomeScreen() {
           ji: parsedAddress.ji.padStart(4, '0')
         };
       }
-    }
 
-    Alert.alert('주소 오류', '해당 주소를 찾을 수 없습니다.');
-    return null;
+      // 주소를 찾을 수 없을 때 null 대신 에러 메시지를 표시하고 빈 객체를 반환
+      Alert.alert('주소 오류', '해당 주소를 찾을 수 없습니다.');
+      return {
+        sigunguCd: '',
+        bjdongCd: '',
+        platGbCd: '',
+        bun: '',
+        ji: '',
+      };
+    }
   };
 
   return (
