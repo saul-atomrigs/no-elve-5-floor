@@ -182,7 +182,7 @@ export default function HomeScreen() {
             </Text>
           </View>
         ) : (
-          <Text>위 검색창에서 주소를 입력해주세요</Text>
+          <Text>위 검색창에서 주소를 입력해주세요 (베타 버전에서는 서울 지역만 지원합니다.)</Text>
         )}
       </View>
 
