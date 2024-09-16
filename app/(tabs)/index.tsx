@@ -1,8 +1,11 @@
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useBuildingInfo } from '../../hooks/useBuildingInfo';
 
 export default function HomeScreen() {
+  const { data: buildingInfo, isLoading, error } = useBuildingInfo('11680', '10300', '0', '0012', '0000');
+
   return (
     <SafeAreaView style={styles.container}>
       {/* 상단 주소 입력 필드 */}
@@ -18,11 +21,23 @@ export default function HomeScreen() {
 
       {/* 건물 정보 카드 */}
       <View style={styles.card}>
-        <View>
-          <Text style={styles.cardTitle}>대치단지</Text>
-          <Text>층수: 5층</Text>
-          <Text style={styles.warningText}>엘리베이터: 없음 <Ionicons name="warning" size={16} color="red" /></Text>
-        </View>
+        {isLoading ? (
+          <Text>Loading...</Text>
+        ) : error ? (
+          <Text>Error: {error.message}</Text>
+        ) : buildingInfo ? (
+          <View>
+            <Text style={styles.cardTitle}>{buildingInfo.newPlatPlc}</Text>
+            <Text style={styles.cardTitle}>{buildingInfo.platPlc}</Text>
+            <Text>층수: {buildingInfo.grndFlrCnt}층</Text>
+            <Text style={styles.warningText}>
+              엘리베이터: {buildingInfo.rideUseElvtCnt > 0 ? '있음' : '없음'} 
+              {buildingInfo.rideUseElvtCnt === 0 && <Ionicons name="warning" size={16} color="red" />}
+            </Text>
+          </View>
+        ) : (
+          <Text>No building information available</Text>
+        )}
       </View>
 
       {/* 지도 보기 버튼 */}
