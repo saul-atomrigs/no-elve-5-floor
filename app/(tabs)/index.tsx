@@ -141,6 +141,10 @@ export default function HomeScreen() {
     }
   };
 
+  const clearInput = () => {
+    setAddress('');
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inputContainer}>
@@ -151,9 +155,11 @@ export default function HomeScreen() {
           onChangeText={setAddress}
           onSubmitEditing={handleAddressSubmit}
         />
-        {/* <TouchableOpacity style={styles.micButton}>
-          <Ionicons name="mic" size={24} color="black" />
-        </TouchableOpacity> */}
+        {address.length > 0 && (
+          <TouchableOpacity style={styles.clearButton} onPress={clearInput}>
+            <Ionicons name="close-circle" size={20} color="gray" />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* 건물 정보 카드 */}
@@ -198,6 +204,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     width: '100%',
+    position: 'relative',
   },
   input: {
     flex: 1,
@@ -207,6 +214,13 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 16,
     paddingVertical: 8,
+    paddingRight: 40, // Add space for the clear button
+  },
+  clearButton: {
+    position: 'absolute',
+    right: 8,
+    top: '50%',
+    transform: [{ translateY: -10 }],
   },
   micButton: {
     marginLeft: 8,
