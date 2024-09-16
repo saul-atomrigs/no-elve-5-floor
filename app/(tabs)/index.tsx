@@ -4,7 +4,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBuildingInfo } from '../../hooks/useBuildingInfo';
 
 export default function HomeScreen() {
-  const { data: buildingInfo, isLoading, error } = useBuildingInfo('11680', '10300', '0', '0012', '0000');
+  // const { data: buildingInfo, isLoading, error } = useBuildingInfo('11680', '10300', '0', '0012', '0000');
+  const { data: buildingInfo, isLoading, error } = useBuildingInfo('11710', '10600', '0', '0171', '0016');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -26,9 +27,9 @@ export default function HomeScreen() {
         ) : error ? (
           <Text>Error: {error.message}</Text>
         ) : buildingInfo ? (
-          <View>
+          <View style={styles.cardContent}>
             <Text style={styles.cardTitle}>{buildingInfo.newPlatPlc}</Text>
-            <Text style={styles.cardTitle}>{buildingInfo.platPlc}</Text>
+            <Text style={styles.cardTitleSub}>{buildingInfo.platPlc}</Text>
             <Text>층수: {buildingInfo.grndFlrCnt}층</Text>
             <Text style={styles.warningText}>
               엘리베이터: {buildingInfo.rideUseElvtCnt > 0 ? '있음' : '없음'} 
@@ -88,9 +89,16 @@ const styles = StyleSheet.create({
     shadowRadius: 3.84,
     elevation: 5,
   },
+  cardContent: {
+    gap: 8,
+  },
   cardTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  cardTitleSub: {
+    fontSize: 14,
+    color: 'gray',
   },
   warningText: {
     color: 'red',
