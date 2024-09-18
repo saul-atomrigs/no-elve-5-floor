@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useBuildingInfo } from '../../hooks/useBuildingInfo';
@@ -186,6 +186,19 @@ export default function HomeScreen() {
         )}
       </View>
 
+      {/* Dynamically displayed image */}
+      {buildingInfo && address.length > 0 && (
+        <Image
+          source={
+            buildingInfo.rideUseElvtCnt > 0
+              ? require('../../assets/images/elevator.webp')
+              : require('../../assets/images/stairs.webp')
+          }
+          style={styles.image}
+          resizeMode="contain"
+        />
+      )}
+
       {/* 지도 보기 버튼 */}
       {/* <TouchableOpacity style={styles.mapButton}>
         <Text style={styles.mapButtonText}>지도에서 보기</Text>
@@ -199,6 +212,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     padding: 16,
+    width: '100%',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -269,6 +283,11 @@ const styles = StyleSheet.create({
   },
   mapButtonText: {
     color: 'white',
+  },
+  image: {
+    width: '100%',
+    height: 400,
+    marginTop: 16,
   },
   // Existing styles
   titleContainer: {
