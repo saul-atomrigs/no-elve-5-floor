@@ -1,5 +1,12 @@
 # Versioning (CHANGELOG)
 
+## 1.1.0 (2024-09-19)
+
+### Minor Changes
+
+- `string-similarity` 이용하여 근접한 문자열 검색 기능 (예를들어, "태헤란로"으로 검색해도 "테헤란로"로 인식)
+- 지도 화면 추가
+
 ## 1.0.1 (2024-09-18)
 
 ### Patch Changes

@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, FlatList } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useBuildingInfo } from '../../hooks/useBuildingInfo';
-import addressData from '../../assets/addressData.json';
 import axios from 'axios';
+import stringSimilarity from 'string-similarity';
+
+import { useBuildingInfo } from '@/hooks/useBuildingInfo';
+import addressData from '@/assets/addressData.json';
 
 export default function HomeScreen() {
   const [address, setAddress] = useState('');
+  const [suggestions, setSuggestions] = useState([]);
   const [buildingParams, setBuildingParams] = useState({
     sigunguCd: '',
     bjdongCd: '',
@@ -24,9 +27,63 @@ export default function HomeScreen() {
     buildingParams.ji
   );
 
-  const handleAddressSubmit = async () => {
+  const handleAddressChange = async (text: string) => {
+    setAddress(text);
+    if (text.length > 2) {
+      // 지번주소 suggestions
+      const lowercaseInput = text.toLowerCase().replace(/\s+/g, '');
+      const localMatches = addressData.filter(item => {
+        const normalizedJibun = item.법정동명.toLowerCase().replace(/\s+/g, '');
+        return normalizedJibun.includes(lowercaseInput);
+      }).slice(0, 5);
+
+      // 도로명주소 suggestions
+      try {
+        const response = await axios.get('https://business.juso.go.kr/addrlink/addrLinkApi.do', {
+          params: {
+            confmKey: process.env.EXPO_PUBLIC_ROAD_JUSO_API_KEY,
+            currentPage: 1,
+            countPerPage: 5,
+            keyword: text,
+            resultType: 'json'
+          }
+        });
+
+        const apiMatches = response.data.results.juso || [];
+
+        const combinedSuggestions = [
+          ...localMatches.map(item => ({ address: item.법정동명, type: '지번' })),
+          ...apiMatches.map(item => ({ address: item.roadAddr, type: '도로명' }))
+        ];
+
+        const sortedSuggestions = combinedSuggestions
+          .map(item => ({
+            ...item,
+            similarity: stringSimilarity.compareTwoStrings(lowercaseInput, item.address.toLowerCase().replace(/\s+/g, ''))
+          }))
+          .sort((a, b) => b.similarity - a.similarity)
+          .slice(0, 10);
+
+        setSuggestions(sortedSuggestions);
+      } catch (error) {
+        console.error('Error fetching address suggestions:', error);
+        setSuggestions(localMatches.map(item => ({ address: item.법정동명, type: '지번' })));
+      }
+    } else {
+      setSuggestions([]);
+    }
+  };
+
+  const handleSuggestionSelect = (selectedAddress: string) => {
+    setAddress(selectedAddress);
+    setSuggestions([]);
+    handleAddressSubmit(selectedAddress);
+  };
+
+  const handleAddressSubmit = async (submittedAddress?: string) => {
     try {
-      const parsedAddress = await parseAddress(address);
+      const addressToSubmit = submittedAddress || address;
+      const parsedAddress = await parseAddress(addressToSubmit);
       console.log('parsedAddress', parsedAddress);
       if (parsedAddress) {
         const params = convertToApiParams(parsedAddress);
@@ -46,21 +103,11 @@ export default function HomeScreen() {
   };
 
   const parseAddress = async (address: string) => {
-    const jibunRegex = /^(.+동)\s*(\d+)(-(\d+))?$/;
-    const jibunMatch = address.match(jibunRegex);
-    
-    if (jibunMatch) {
-      console.log('jibunMatch', jibunMatch);
-      return {
-        dongName: jibunMatch[1],
-        bun: jibunMatch[2],
-        ji: jibunMatch[4] || '0'
-      };
-    } else {
-      // 도로명주소 처리
+    const roadNameMatch = address.match(/^(.+[로길])\s*(\d+(-\d+)?)/);
+    if (roadNameMatch) {
       const response = await axios.get('https://business.juso.go.kr/addrlink/addrLinkApi.do', {
         params: {
-          confmKey: 'U01TX0FVVEgyMDI0MDkxNjIxMTE0MDExNTA4ODc=',
+          confmKey: process.env.EXPO_PUBLIC_ROAD_JUSO_API_KEY,
           currentPage: 1,
           countPerPage: 1,
           keyword: address,
@@ -91,6 +138,18 @@ export default function HomeScreen() {
             ji
           };
         }
+      }
+    } else {
+      const jibunRegex = /^(.+동)\s*(\d+)(-(\d+))?$/;
+      const jibunMatch = address.match(jibunRegex);
+      
+      if (jibunMatch) {
+        console.log('jibunMatch', jibunMatch);
+        return {
+          dongName: jibunMatch[1],
+          bun: jibunMatch[2],
+          ji: jibunMatch[4] || '0'
+        };
       }
     }
     return null;
@@ -145,15 +204,25 @@ export default function HomeScreen() {
     setAddress('');
   };
 
+  const renderSuggestion = ({ item }: { item: { address: string, type: string } }) => (
+    <TouchableOpacity onPress={() => handleSuggestionSelect(item.address)}>
+      <View style={styles.suggestionItem}>
+        <Text style={styles.suggestionText}>{item.address}</Text>
+        <Text style={styles.suggestionType}>{item.type}</Text>
+      </View>
+    </TouchableOpacity>
+  );
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.inputContainer}>
+        {/* 주소 입력창 */}
         <TextInput
           style={styles.input}
           placeholder="송파동 123-45, 신림로 67"
           value={address}
-          onChangeText={setAddress}
-          onSubmitEditing={handleAddressSubmit}
+          onChangeText={handleAddressChange}
+          onSubmitEditing={() => handleAddressSubmit()}
         />
         {address.length > 0 && (
           <TouchableOpacity style={styles.clearButton} onPress={clearInput}>
@@ -161,6 +230,16 @@ export default function HomeScreen() {
           </TouchableOpacity>
         )}
       </View>
+
+      {/* 주소 추천 목록 */}
+      {suggestions.length > 0 && (
+        <FlatList
+          data={suggestions}
+          keyExtractor={(item, index) => index.toString()}
+          renderItem={renderSuggestion}
+          style={styles.suggestionsList}
+        />
+      )}
 
       {/* 건물 정보 카드 */}
       <View style={styles.card}>
@@ -305,5 +384,30 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     position: 'absolute',
+  },
+  suggestionsList: {
+    maxHeight: 200,
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: 8,
+    marginTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  suggestionItem: {
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  suggestionText: {
+    fontSize: 16,
+    color: '#333',
+  },
+  suggestionType: {
+    fontSize: 12,
+    color: '#666',
   },
 });
