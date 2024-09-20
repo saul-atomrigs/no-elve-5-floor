@@ -20,7 +20,7 @@ const fetchBuildingInfo = async (
         numOfRows: 1,
         pageNo: 1,
         _type: 'json',
-        serviceKey: '60nrUJ6d8patgnInsKZYZVg+cszwYk4rTghKElOIhAfSJeWSy9rLVO8gjvmpHWJmCtAqxtzQoNF8QuSSNgzqXA=='
+        serviceKey: process.env.EXPO_PUBLIC_BUILDING_INFO_API_KEY
       }
     }
   );
