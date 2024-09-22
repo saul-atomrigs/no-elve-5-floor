@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, Image, FlatList } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  Alert,
+  Image,
+  FlatList,
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import axios from 'axios';
@@ -19,7 +28,11 @@ export default function HomeScreen() {
     ji: '',
   });
 
-  const { data: buildingInfo, isLoading, error } = useBuildingInfo(
+  const {
+    data: buildingInfo,
+    isLoading,
+    error,
+  } = useBuildingInfo(
     buildingParams.sigunguCd,
     buildingParams.bjdongCd,
     buildingParams.platGbCd,
@@ -32,34 +45,50 @@ export default function HomeScreen() {
     if (text.length > 2) {
       // 지번주소 suggestions
       const lowercaseInput = text.toLowerCase().replace(/\s+/g, '');
-      const localMatches = addressData.filter(item => {
-        const normalizedJibun = item.법정동명.toLowerCase().replace(/\s+/g, '');
-        return normalizedJibun.includes(lowercaseInput);
-      }).slice(0, 5);
+      const localMatches = addressData
+        .filter((item) => {
+          const normalizedJibun = item.법정동명
+            .toLowerCase()
+            .replace(/\s+/g, '');
+          return normalizedJibun.includes(lowercaseInput);
+        })
+        .slice(0, 5);
 
       // 도로명주소 suggestions
       try {
-        const response = await axios.get('https://business.juso.go.kr/addrlink/addrLinkApi.do', {
-          params: {
-            confmKey: process.env.EXPO_PUBLIC_ROAD_JUSO_API_KEY,
-            currentPage: 1,
-            countPerPage: 5,
-            keyword: text,
-            resultType: 'json'
+        const response = await axios.get(
+          'https://business.juso.go.kr/addrlink/addrLinkApi.do',
+          {
+            params: {
+              confmKey: process.env.EXPO_PUBLIC_ROAD_JUSO_API_KEY,
+              currentPage: 1,
+              countPerPage: 5,
+              keyword: text,
+              resultType: 'json',
+            },
           }
-        });
+        );
 
         const apiMatches = response.data.results.juso || [];
 
         const combinedSuggestions = [
-          ...localMatches.map(item => ({ address: item.법정동명, type: '지번' })),
-          ...apiMatches.map(item => ({ address: item.roadAddr, type: '도로명' }))
+          ...localMatches.map((item) => ({
+            address: item.법정동명,
+            type: '지번',
+          })),
+          ...apiMatches.map((item) => ({
+            address: item.roadAddr,
+            type: '도로명',
+          })),
         ];
 
         const sortedSuggestions = combinedSuggestions
-          .map(item => ({
+          .map((item) => ({
             ...item,
-            similarity: stringSimilarity.compareTwoStrings(lowercaseInput, item.address.toLowerCase().replace(/\s+/g, ''))
+            similarity: stringSimilarity.compareTwoStrings(
+              lowercaseInput,
+              item.address.toLowerCase().replace(/\s+/g, '')
+            ),
           }))
           .sort((a, b) => b.similarity - a.similarity)
           .slice(0, 10);
@@ -67,7 +96,9 @@ export default function HomeScreen() {
         setSuggestions(sortedSuggestions);
       } catch (error) {
         console.error('Error fetching address suggestions:', error);
-        setSuggestions(localMatches.map(item => ({ address: item.법정동명, type: '지번' })));
+        setSuggestions(
+          localMatches.map((item) => ({ address: item.법정동명, type: '지번' }))
+        );
       }
     } else {
       setSuggestions([]);
@@ -105,15 +136,18 @@ export default function HomeScreen() {
   const parseAddress = async (address: string) => {
     const roadNameMatch = address.match(/^(.+[로길])\s*(\d+(-\d+)?)/);
     if (roadNameMatch) {
-      const response = await axios.get('https://business.juso.go.kr/addrlink/addrLinkApi.do', {
-        params: {
-          confmKey: process.env.EXPO_PUBLIC_ROAD_JUSO_API_KEY,
-          currentPage: 1,
-          countPerPage: 1,
-          keyword: address,
-          resultType: 'json'
+      const response = await axios.get(
+        'https://business.juso.go.kr/addrlink/addrLinkApi.do',
+        {
+          params: {
+            confmKey: process.env.EXPO_PUBLIC_ROAD_JUSO_API_KEY,
+            currentPage: 1,
+            countPerPage: 1,
+            keyword: address,
+            resultType: 'json',
+          },
         }
-      });
+      );
 
       console.log('response 도로명', response);
 
@@ -121,46 +155,46 @@ export default function HomeScreen() {
         const juso = response.data.results.juso[0];
         const jibunAddr = juso.jibunAddr;
         console.log('jibunAddr', jibunAddr);
-        
+
         // 동 이름과 번지수만 추출하는 정규표현식
         const extractRegex = /(\S+동)\s+(\d+(?:-\d+)?)/;
         const extractMatch = jibunAddr.match(extractRegex);
-        
+
         if (extractMatch) {
           const [, dongName, fullNumber] = extractMatch;
           const [bun, ji = '0'] = fullNumber.split('-');
-          
+
           return {
             sigunguCd: juso.admCd.slice(0, 5),
             bjdongCd: juso.admCd.slice(5, 10),
             dongName,
             bun,
-            ji
+            ji,
           };
         }
       }
     } else {
       const jibunRegex = /^(.+동)\s*(\d+)(-(\d+))?$/;
       const jibunMatch = address.match(jibunRegex);
-      
+
       if (jibunMatch) {
         console.log('jibunMatch', jibunMatch);
         return {
           dongName: jibunMatch[1],
           bun: jibunMatch[2],
-          ji: jibunMatch[4] || '0'
+          ji: jibunMatch[4] || '0',
         };
       }
     }
     return null;
   };
 
-  const convertToApiParams = (parsedAddress: { 
-    sigunguCd?: string; 
-    bjdongCd?: string; 
-    dongName: string; 
-    bun: string; 
-    ji: string 
+  const convertToApiParams = (parsedAddress: {
+    sigunguCd?: string;
+    bjdongCd?: string;
+    dongName: string;
+    bun: string;
+    ji: string;
   }) => {
     if (parsedAddress.sigunguCd && parsedAddress.bjdongCd) {
       // 도로명주소의 경우 (API 응답에서 이미 코드를 받아옴)
@@ -169,12 +203,14 @@ export default function HomeScreen() {
         bjdongCd: parsedAddress.bjdongCd,
         platGbCd: '0', // 일반 지번
         bun: parsedAddress.bun.padStart(4, '0'),
-        ji: parsedAddress.ji.padStart(4, '0')
+        ji: parsedAddress.ji.padStart(4, '0'),
       };
     } else {
       // 지번주소의 경우 (기존 로직)
-      const dongInfo = addressData.find(item => 
-        item.법정동명.includes(parsedAddress.dongName) && item.폐지여부 === "존재"
+      const dongInfo = addressData.find(
+        (item) =>
+          item.법정동명.includes(parsedAddress.dongName) &&
+          item.폐지여부 === '존재'
       );
 
       if (dongInfo) {
@@ -184,7 +220,7 @@ export default function HomeScreen() {
           bjdongCd: code.slice(5, 10),
           platGbCd: '0', // 일반 지번
           bun: parsedAddress.bun.padStart(4, '0'),
-          ji: parsedAddress.ji.padStart(4, '0')
+          ji: parsedAddress.ji.padStart(4, '0'),
         };
       }
 
@@ -204,7 +240,11 @@ export default function HomeScreen() {
     setAddress('');
   };
 
-  const renderSuggestion = ({ item }: { item: { address: string, type: string } }) => (
+  const renderSuggestion = ({
+    item,
+  }: {
+    item: { address: string; type: string };
+  }) => (
     <TouchableOpacity onPress={() => handleSuggestionSelect(item.address)}>
       <View style={styles.suggestionItem}>
         <Text style={styles.suggestionText}>{item.address}</Text>
@@ -219,14 +259,14 @@ export default function HomeScreen() {
         {/* 주소 입력창 */}
         <TextInput
           style={styles.input}
-          placeholder="송파동 123-45, 신림로 67"
+          placeholder='송파동 123-45, 신림로 67'
           value={address}
           onChangeText={handleAddressChange}
           onSubmitEditing={() => handleAddressSubmit()}
         />
         {address.length > 0 && (
           <TouchableOpacity style={styles.clearButton} onPress={clearInput}>
-            <Ionicons name="close-circle" size={20} color="gray" />
+            <Ionicons name='close-circle' size={20} color='gray' />
           </TouchableOpacity>
         )}
       </View>
@@ -252,16 +292,20 @@ export default function HomeScreen() {
             <Text style={styles.cardTitle}>{buildingInfo.newPlatPlc}</Text>
             <Text style={styles.cardTitleSub}>{buildingInfo.platPlc}</Text>
             <Text>층수: {buildingInfo.grndFlrCnt}층</Text>
-            <Text style={[
-              styles.warningText,
-              buildingInfo.rideUseElvtCnt > 0 ? styles.blueText : null
-            ]}>
-              엘리베이터: {buildingInfo.rideUseElvtCnt > 0 ? '있음' : '없음'} 
-              {buildingInfo.rideUseElvtCnt === 0 && <Ionicons name="warning" size={16} color="red" />}
+            <Text
+              style={[
+                styles.warningText,
+                buildingInfo.rideUseElvtCnt > 0 ? styles.blueText : null,
+              ]}
+            >
+              엘리베이터: {buildingInfo.rideUseElvtCnt > 0 ? '있음' : '없음'}
+              {buildingInfo.rideUseElvtCnt === 0 && (
+                <Ionicons name='warning' size={16} color='red' />
+              )}
             </Text>
           </View>
         ) : (
-          <Text>위 검색창에서 주소를 입력해주세요 (베타 버전에서는 서울 지역만 지원합니다.)</Text>
+          <Text>위 검색창에서 주소를 입력해주세요 (서울 지역 서비스)</Text>
         )}
       </View>
 
@@ -274,7 +318,7 @@ export default function HomeScreen() {
               : require('../../assets/images/stairs.webp')
           }
           style={styles.image}
-          resizeMode="contain"
+          resizeMode='contain'
         />
       )}
 
