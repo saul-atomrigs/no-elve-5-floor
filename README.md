@@ -1,6 +1,17 @@
-# 노엘베5층 App
-
-Author: @saul-atomrigs (이솔)
+<div align="center">
+    <br />
+    <h2> 노엘베5층 App </h2>
+    <a href="https://apps.apple.com/kr/app/%EB%85%B8%EC%97%98%EB%B2%A05%EC%B8%B5/id6692612384">🍏 [Published on App Store]</a>
+    <a href="https://play.google.com/store/apps/details?id=com.solleedata.noelve5floor"> 🤖 [Published on Google Play]</a>
+    <br /><br />
+    <img src="https://img.shields.io/badge/TypeScript-5.3.3-3178C6?logo=typescript">
+    <img src="https://img.shields.io/badge/Supabase-2.45.3-339933?logo=supabase"> 
+    <img src="https://img.shields.io/badge/React%20Native-0.74.5-61DAFB?logo=React"> 
+    <br /><br />
+    <img src="https://img.shields.io/badge/Expo-51.0.28-61DAFB?logo=expo"> 
+    <img src="https://img.shields.io/badge/Jest-29.2.1-339933?logo=jest"> 
+    <br /><br />
+</div>
 
 | 엘리베이터 있음 | 엘리베이터 없음         |
 | :-------- | :------- |
