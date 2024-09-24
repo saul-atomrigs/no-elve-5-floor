@@ -5,7 +5,6 @@
     <a href="https://play.google.com/store/apps/details?id=com.solleedata.noelve5floor"> 🤖 [Published on Google Play]</a>
     <br /><br />
     <img src="https://img.shields.io/badge/TypeScript-5.3.3-3178C6?logo=typescript">
-    <img src="https://img.shields.io/badge/Supabase-2.45.3-339933?logo=supabase"> 
     <img src="https://img.shields.io/badge/React%20Native-0.74.5-61DAFB?logo=React"> 
     <br /><br />
     <img src="https://img.shields.io/badge/Expo-51.0.28-61DAFB?logo=expo"> 
