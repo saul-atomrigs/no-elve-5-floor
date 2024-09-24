@@ -1,6 +1,6 @@
 <div align="center">
     <br />
-    <h2> 노엘베5층 App </h2>
+    <h1> 노엘베5층 App </h1>
     <a href="https://apps.apple.com/kr/app/%EB%85%B8%EC%97%98%EB%B2%A05%EC%B8%B5/id6692612384">🍏 [Published on App Store]</a>
     <a href="https://play.google.com/store/apps/details?id=com.solleedata.noelve5floor"> 🤖 [Published on Google Play]</a>
     <br /><br />
