@@ -13,7 +13,7 @@
     <br /><br />
 </div>
 
-| 엘리베이터 있음 | 엘리베이터 없음         |
+| 엘리베이터 O | 엘리베이터 X         |
 | :-------- | :------- |
 | ![Captura de pantalla 2024-09-18 a las 1 36 05 p  m](https://github.com/user-attachments/assets/2a459546-b5d8-436f-9dd9-5f0d4f8db65a) | ![Captura de pantalla 2024-09-18 a las 1 36 12 p  m](https://github.com/user-attachments/assets/cf52815e-8a82-48f6-8b21-845690f903b5) |
 
