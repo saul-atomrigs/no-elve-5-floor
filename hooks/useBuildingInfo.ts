@@ -21,7 +21,8 @@ const fetchBuildingInfo = async (
         pageNo: 1,
         _type: 'json',
         serviceKey: process.env.EXPO_PUBLIC_BUILDING_INFO_API_KEY
-      }
+      },
+      data: undefined
     }
   );
 
@@ -33,7 +34,7 @@ const fetchBuildingInfo = async (
   return data.response.body.items.item;
 };
 
-export const useBuildingInfo = (
+const useBuildingInfo = (
   sigunguCd: string,
   bjdongCd: string,
   platGbCd: string,
@@ -46,3 +47,5 @@ export const useBuildingInfo = (
     enabled: !!sigunguCd && !!bjdongCd && !!platGbCd && !!bun && !!ji,
   });
 };
+
+export default useBuildingInfo;
