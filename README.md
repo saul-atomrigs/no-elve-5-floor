@@ -6,9 +6,12 @@
     <br /><br />
     <img src="https://img.shields.io/badge/TypeScript-5.3.3-3178C6?logo=typescript">
     <img src="https://img.shields.io/badge/React%20Native-0.74.5-61DAFB?logo=React"> 
+    <img src="https://img.shields.io/badge/Expo-51.0.28-000000?logo=expo"> 
     <br /><br />
-    <img src="https://img.shields.io/badge/Expo-51.0.28-61DAFB?logo=expo"> 
+    <img src="https://img.shields.io/badge/Tanstack/Query-5.56.2-000000?logo=react-query"> 
     <img src="https://img.shields.io/badge/Jest-29.2.1-339933?logo=jest"> 
+    <br /><br />
+    <img width="508" alt="Captura de pantalla 2024-09-27 a las 3 37 34 p  m" src="https://github.com/user-attachments/assets/15958b04-07c6-49c2-8322-19ccc72adca5">
     <br /><br />
 </div>
 
