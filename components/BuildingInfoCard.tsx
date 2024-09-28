@@ -45,11 +45,12 @@ const BuildingInfoCard: React.FC<BuildingInfoCardProps> = ({ buildingInfo, isLoa
         <Image
           source={
             buildingInfo.rideUseElvtCnt > 0
-              ? require('../../assets/images/elevator.webp')
-              : require('../../assets/images/stairs.webp')
+              ? require('@/assets/images/elevator.webp')
+              : require('@/assets/images/stairs.webp')
           }
           style={styles.image}
           resizeMode='contain'
+          testID='building-image'
         />
       )}
     </View>

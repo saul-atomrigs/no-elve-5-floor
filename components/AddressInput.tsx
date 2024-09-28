@@ -25,13 +25,13 @@ const AddressInput: React.FC<AddressInputProps> = ({
       <TextInput
         style={styles.input}
         placeholder='송파동 123-45, 신림로 67'
-        value={address}
+        value={address ?? ''}
         onChangeText={onChangeText}
         onSubmitEditing={onSubmitEditing}
         placeholderTextColor={colors.placeholderText}
       />
       {/* 주소 입력 창 오른쪽에 있는 버튼 */}
-      {address.length > 0 && (
+      {address?.length > 0 && (
         <TouchableOpacity style={styles.clearButton} onPress={clearInput}>
           <Ionicons name='close-circle' size={size.lineWidth.micro} color={colors.border} />
         </TouchableOpacity>
