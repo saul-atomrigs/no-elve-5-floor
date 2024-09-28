@@ -11,7 +11,7 @@
     <img src="https://img.shields.io/badge/Tanstack/Query-5.56.2-000000?logo=react-query"> 
     <img src="https://img.shields.io/badge/Jest-29.2.1-339933?logo=jest"> 
     <br /><br />
-    <img width="508" alt="Captura de pantalla 2024-09-27 a las 3 37 34 p  m" src="https://github.com/user-attachments/assets/15958b04-07c6-49c2-8322-19ccc72adca5">
+    <img width="607" alt="Captura de pantalla 2024-09-28 a las 10 53 53 a  m" src="https://github.com/user-attachments/assets/2c817bbc-a0b6-44f9-b4eb-9ebf8deb0fc6">
     <br /><br />
 </div>
 
