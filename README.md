@@ -8,8 +8,9 @@
     <img src="https://img.shields.io/badge/React%20Native-0.74.5-61DAFB?logo=React"> 
     <img src="https://img.shields.io/badge/Expo-51.0.28-000000?logo=expo"> 
     <br /><br />
-    <img src="https://img.shields.io/badge/Tanstack/Query-5.56.2-000000?logo=react-query"> 
+    <img src="https://img.shields.io/badge/Tanstack/Query-5.56.2-FFA500?logo=react-query"> 
     <img src="https://img.shields.io/badge/Jest-29.2.1-339933?logo=jest"> 
+    <img src="https://img.shields.io/badge/ESLint-8.57.0-800080?logo=eslint"> 
     <br /><br />
     <img width="607" alt="Captura de pantalla 2024-09-28 a las 10 53 53 a  m" src="https://github.com/user-attachments/assets/2c817bbc-a0b6-44f9-b4eb-9ebf8deb0fc6">
     <br /><br />
