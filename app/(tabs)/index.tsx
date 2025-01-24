@@ -1,40 +1,28 @@
 import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
-import { AddressInput, SuggestionsList, BuildingInfoCard } from '@/components';
+import { AddressInput, BuildingInfoCard } from '@/components';
 import { useAddress, useBuildingInfo } from '@/hooks';
 import { spacing } from '@/design-tokens';
 
 export default function HomeScreen() {
-  const {
-    address,
-    suggestions,
-    buildingParams,
-    handleAddressChange,
-    handleSuggestionSelect,
-    handleAddressSubmit,
-  } = useAddress();
+  const { buildingParams, handleAddressSubmit } = useAddress();
+  const { sigunguCd, bjdongCd, platGbCd, bun, ji } = buildingParams;
 
-  const { data: buildingInfo, isLoading, error } = useBuildingInfo(
-    buildingParams.sigunguCd,
-    buildingParams.bjdongCd,
-    buildingParams.platGbCd,
-    buildingParams.bun,
-    buildingParams.ji
-  );
+  const {
+    data: buildingInfo,
+    isLoading,
+    error,
+  } = useBuildingInfo(sigunguCd, bjdongCd, platGbCd, bun, ji);
 
   return (
     <SafeAreaView style={styles.container}>
-      <AddressInput
-        address={address}
-        onChangeText={handleAddressChange}
-        onSubmitEditing={() => handleAddressSubmit()}
-        clearInput={() => handleAddressChange('')}
+      <AddressInput onAddressSubmit={handleAddressSubmit} />
+      <BuildingInfoCard
+        buildingInfo={buildingInfo}
+        isLoading={isLoading}
+        error={error}
       />
-      {suggestions.length > 0 && (
-        <SuggestionsList suggestions={suggestions} onSelect={handleSuggestionSelect} />
-      )}
-      <BuildingInfoCard buildingInfo={buildingInfo} isLoading={isLoading} error={error} />
     </SafeAreaView>
   );
 }
