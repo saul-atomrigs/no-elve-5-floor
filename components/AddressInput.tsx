@@ -2,7 +2,7 @@ import React from 'react';
 import { View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { colors, size, spacing } from '@/design-tokens';
-import SuggestionsList from './SuggestionList';
+import SuggestionsList from './suggestions/SuggestionList';
 import useAddressSearch from '@/hooks/useAddressSearch';
 
 interface AddressInputProps {

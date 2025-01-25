@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import SuggestionsList from '../SuggestionList';
+import SuggestionsList from '../suggestions/SuggestionList';
 
 describe('SuggestionsList', () => {
   const mockSuggestions = [
