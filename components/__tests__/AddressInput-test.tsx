@@ -2,66 +2,53 @@ import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
 import AddressInput from '../address-input/AddressInput';
 
+jest.mock('@/hooks', () => ({
+  useAddressSearch: () => ({
+    address: '',
+    handleAddressChange: jest.fn(),
+    clearInput: jest.fn(),
+  }),
+}));
+
 describe('AddressInput', () => {
-  const mockOnChangeText = jest.fn();
-  const mockOnSubmitEditing = jest.fn();
-  const mockClearInput = jest.fn();
+  const mockOnAddressSubmit = jest.fn();
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   it('renders correctly', () => {
     const { getByPlaceholderText } = render(
-      <AddressInput
-        address=''
-        onChangeText={mockOnChangeText}
-        onSubmitEditing={mockOnSubmitEditing}
-        clearInput={mockClearInput}
-      />
+      <AddressInput onAddressSubmit={mockOnAddressSubmit} />
     );
 
     expect(getByPlaceholderText('송파동 123-45, 신림로 67')).toBeTruthy();
   });
 
-  it('calls onChangeText when text is changed', () => {
+  it('calls onAddressSubmit when enter key is pressed', () => {
     const { getByPlaceholderText } = render(
-      <AddressInput
-        address=''
-        onChangeText={mockOnChangeText}
-        onSubmitEditing={mockOnSubmitEditing}
-        clearInput={mockClearInput}
-      />
+      <AddressInput onAddressSubmit={mockOnAddressSubmit} />
     );
 
     const input = getByPlaceholderText('송파동 123-45, 신림로 67');
-    fireEvent.changeText(input, '123 Main St');
+    fireEvent(input, 'submitEditing');
 
-    expect(mockOnChangeText).toHaveBeenCalledWith('123 Main St');
+    expect(mockOnAddressSubmit).toHaveBeenCalledWith('');
   });
 
-  it('calls onSubmitEditing when enter key is pressed', () => {
-    const { getByPlaceholderText } = render(
-      <AddressInput
-        address=''
-        onChangeText={mockOnChangeText}
-        onSubmitEditing={mockOnSubmitEditing}
-        clearInput={mockClearInput}
-      />
+  it('shows clear button when address is not empty', () => {
+    jest.mock('@/hooks', () => ({
+      useAddressSearch: () => ({
+        address: '테헤란로 146',
+        handleAddressChange: jest.fn(),
+        clearInput: jest.fn(),
+      }),
+    }));
+
+    const { getByTestId } = render(
+      <AddressInput onAddressSubmit={mockOnAddressSubmit} />
     );
 
-    const input = getByPlaceholderText('송파동 123-45, 신림로 67');
-    fireEvent(input, 'submitEditing'); // Use fireEvent to simulate the onSubmitEditing event
-
-    expect(mockOnSubmitEditing).toHaveBeenCalled();
-  });
-
-  it('displays the correct value', () => {
-    const { getByDisplayValue } = render(
-      <AddressInput
-        address='테헤란로 146'
-        onChangeText={mockOnChangeText}
-        onSubmitEditing={mockOnSubmitEditing}
-        clearInput={mockClearInput}
-      />
-    );
-
-    expect(getByDisplayValue('테헤란로 146')).toBeTruthy();
+    expect(getByTestId('clear-button')).toBeTruthy();
   });
 });

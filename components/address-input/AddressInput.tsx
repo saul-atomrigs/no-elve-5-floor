@@ -23,7 +23,11 @@ export default function AddressInput({ onAddressSubmit }: AddressInputProps) {
         placeholderTextColor={colors.placeholderText}
       />
       {address.length && (
-        <TouchableOpacity style={styles.clearButton} onPress={clearInput}>
+        <TouchableOpacity
+          style={styles.clearButton}
+          onPress={clearInput}
+          testID='clear-button'
+        >
           <Ionicons
             name='close-circle'
             size={size.lineWidth.micro}
