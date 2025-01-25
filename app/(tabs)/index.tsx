@@ -2,12 +2,15 @@ import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 
 import { AddressInput, BuildingInfoCard } from '@/components';
-import { useAddress, useBuildingInfo } from '@/hooks';
+import SuggestionsList from '@/components/suggestions/SuggestionList';
+import { useAddress, useBuildingInfo, useAddressSearch } from '@/hooks';
 import { spacing } from '@/design-tokens';
 
 export default function HomeScreen() {
   const { buildingParams, handleAddressSubmit } = useAddress();
   const { sigunguCd, bjdongCd, platGbCd, bun, ji } = buildingParams;
+  const { suggestions, handleSuggestionSelect } =
+    useAddressSearch(handleAddressSubmit);
 
   const {
     data: buildingInfo,
@@ -18,6 +21,12 @@ export default function HomeScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <AddressInput onAddressSubmit={handleAddressSubmit} />
+      {suggestions.length && (
+        <SuggestionsList
+          suggestions={suggestions}
+          onSelect={handleSuggestionSelect}
+        />
+      )}
       <BuildingInfoCard
         buildingInfo={buildingInfo}
         isLoading={isLoading}

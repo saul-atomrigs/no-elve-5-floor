@@ -1,6 +1,6 @@
 import React from 'react';
 import { render, fireEvent } from '@testing-library/react-native';
-import AddressInput from '../AddressInput';
+import AddressInput from '../address-input/AddressInput';
 
 describe('AddressInput', () => {
   const mockOnChangeText = jest.fn();
@@ -10,7 +10,7 @@ describe('AddressInput', () => {
   it('renders correctly', () => {
     const { getByPlaceholderText } = render(
       <AddressInput
-        address=""
+        address=''
         onChangeText={mockOnChangeText}
         onSubmitEditing={mockOnSubmitEditing}
         clearInput={mockClearInput}
@@ -23,7 +23,7 @@ describe('AddressInput', () => {
   it('calls onChangeText when text is changed', () => {
     const { getByPlaceholderText } = render(
       <AddressInput
-        address=""
+        address=''
         onChangeText={mockOnChangeText}
         onSubmitEditing={mockOnSubmitEditing}
         clearInput={mockClearInput}
@@ -39,7 +39,7 @@ describe('AddressInput', () => {
   it('calls onSubmitEditing when enter key is pressed', () => {
     const { getByPlaceholderText } = render(
       <AddressInput
-        address=""
+        address=''
         onChangeText={mockOnChangeText}
         onSubmitEditing={mockOnSubmitEditing}
         clearInput={mockClearInput}
@@ -47,7 +47,7 @@ describe('AddressInput', () => {
     );
 
     const input = getByPlaceholderText('송파동 123-45, 신림로 67');
-    fireEvent(input, 'submitEditing');  // Use fireEvent to simulate the onSubmitEditing event
+    fireEvent(input, 'submitEditing'); // Use fireEvent to simulate the onSubmitEditing event
 
     expect(mockOnSubmitEditing).toHaveBeenCalled();
   });
@@ -55,7 +55,7 @@ describe('AddressInput', () => {
   it('displays the correct value', () => {
     const { getByDisplayValue } = render(
       <AddressInput
-        address="테헤란로 146"
+        address='테헤란로 146'
         onChangeText={mockOnChangeText}
         onSubmitEditing={mockOnSubmitEditing}
         clearInput={mockClearInput}
