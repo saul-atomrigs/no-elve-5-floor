@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { colors, size, spacing } from '@/design-tokens';
-import Loading from './Loading';
-import Error from './Error';
+import Loading from '../Loading';
+import Error from '../Error';
 import BuildingDetails from './BuildingDetails';
 import BuildingInfoImage from './BuildingInfoImage';
 

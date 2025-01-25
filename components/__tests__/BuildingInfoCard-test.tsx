@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import BuildingInfoCard from '../BuildingInfoCard';
+import BuildingInfoCard from '../building-info/BuildingInfoCard';
 
 describe('BuildingInfoCard', () => {
   const mockBuildingInfo = {
@@ -22,7 +22,11 @@ describe('BuildingInfoCard', () => {
 
   it('renders error state correctly', () => {
     const { getByText } = render(
-      <BuildingInfoCard buildingInfo={null} isLoading={false} error={mockError} />
+      <BuildingInfoCard
+        buildingInfo={null}
+        isLoading={false}
+        error={mockError}
+      />
     );
 
     expect(getByText(`Error: ${mockError.message}`)).toBeTruthy();
@@ -30,7 +34,11 @@ describe('BuildingInfoCard', () => {
 
   it('renders building info correctly', () => {
     const { getByText, getByTestId } = render(
-      <BuildingInfoCard buildingInfo={mockBuildingInfo} isLoading={false} error={null} />
+      <BuildingInfoCard
+        buildingInfo={mockBuildingInfo}
+        isLoading={false}
+        error={null}
+      />
     );
 
     expect(getByText(mockBuildingInfo.newPlatPlc)).toBeTruthy();
@@ -43,7 +51,11 @@ describe('BuildingInfoCard', () => {
   it('renders no elevator warning correctly', () => {
     const noElevatorInfo = { ...mockBuildingInfo, rideUseElvtCnt: 0 };
     const { getByText, getByTestId } = render(
-      <BuildingInfoCard buildingInfo={noElevatorInfo} isLoading={false} error={null} />
+      <BuildingInfoCard
+        buildingInfo={noElevatorInfo}
+        isLoading={false}
+        error={null}
+      />
     );
 
     expect(getByText('엘리베이터: 없음')).toBeTruthy();
@@ -55,6 +67,8 @@ describe('BuildingInfoCard', () => {
       <BuildingInfoCard buildingInfo={null} isLoading={false} error={null} />
     );
 
-    expect(getByText('위 검색창에서 주소를 입력해주세요 (서울 지역 서비스)')).toBeTruthy();
+    expect(
+      getByText('위 검색창에서 주소를 입력해주세요 (서울 지역 서비스)')
+    ).toBeTruthy();
   });
 });
