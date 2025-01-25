@@ -1,7 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { colors, size, spacing, typography } from '@/design-tokens';
+import { View, Text, StyleSheet } from 'react-native';
+import { colors, size, spacing } from '@/design-tokens';
+import Loading from './Loading';
+import Error from './Error';
+import BuildingDetails from './BuildingDetails';
+import BuildingInfoImage from './BuildingInfoImage';
 
 interface BuildingInfoCardProps {
   buildingInfo: any;
@@ -9,49 +12,33 @@ interface BuildingInfoCardProps {
   error: any;
 }
 
-/**
- * 빌딩 정보 카드
- */
-const BuildingInfoCard: React.FC<BuildingInfoCardProps> = ({ buildingInfo, isLoading, error }) => {
+const BuildingInfoCard: React.FC<BuildingInfoCardProps> = ({
+  buildingInfo,
+  isLoading,
+  error,
+}) => {
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (error) {
+    return <Error message={error.message} />;
+  }
+
+  if (!buildingInfo) {
+    return (
+      <View style={styles.card}>
+        <Text>위 검색창에서 주소를 입력해주세요 (서울 지역 서비스)</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.card}>
-      {isLoading ? (
-        <Text>Loading...</Text>
-      ) : error ? (
-        <Text>Error: {error.message}</Text>
-      ) : buildingInfo ? (
-        /** 빌딩 정보 카드 내용 */
-        <View style={styles.cardContent}>
-          <Text style={styles.cardTitle}>{buildingInfo.newPlatPlc}</Text>
-          <Text style={styles.cardTitleSub}>{buildingInfo.platPlc}</Text>
-          <Text>층수: {buildingInfo.grndFlrCnt}층</Text>
-          <Text
-            style={[
-              styles.warningText,
-              buildingInfo.rideUseElvtCnt > 0 ? styles.blueText : null,
-            ]}
-          >
-            엘리베이터: {buildingInfo.rideUseElvtCnt > 0 ? '있음' : '없음'}
-            {buildingInfo.rideUseElvtCnt === 0 && (
-              <Ionicons name='warning' size={size.lineWidth.micro} color={colors.highlight} />
-            )}
-          </Text>
-        </View>
-      ) : (
-        <Text>위 검색창에서 주소를 입력해주세요 (서울 지역 서비스)</Text>
-      )}
-      {/* 엘리베이터/계단 이미지 */}
+      <BuildingDetails buildingInfo={buildingInfo} />
+
       {buildingInfo && (
-        <Image
-          source={
-            buildingInfo.rideUseElvtCnt > 0
-              ? require('@/assets/images/elevator.webp')
-              : require('@/assets/images/stairs.webp')
-          }
-          style={styles.image}
-          resizeMode='contain'
-          testID='building-image'
-        />
+        <BuildingInfoImage hasElevator={buildingInfo.rideUseElvtCnt > 0} />
       )}
     </View>
   );
@@ -72,23 +59,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: size.lineWidth.large,
     elevation: 5,
-  },
-  cardContent: {
-    gap: spacing.sm,
-  },
-  cardTitle: {
-    fontSize: typography.fontSize.lg,
-    fontWeight: typography.fontWeight.bold,
-  },
-  cardTitleSub: {
-    fontSize: typography.fontSize.md,
-    color: colors.placeholderText,
-  },
-  warningText: {
-    color: colors.highlight,
-  },
-  blueText: {
-    color: colors.agendaToday,
   },
   image: {
     width: '100%',
