@@ -11,11 +11,14 @@
     <img src="https://img.shields.io/badge/Tanstack/Query-5.56.2-FFA500?logo=react-query"> 
     <img src="https://img.shields.io/badge/Jest-29.2.1-339933?logo=jest"> 
     <img src="https://img.shields.io/badge/ESLint-8.57.0-800080?logo=eslint"> 
-    <br /><br />
-    <img width="607" alt="Captura de pantalla 2024-09-28 a las 10 53 53 a  m" src="https://github.com/user-attachments/assets/2c817bbc-a0b6-44f9-b4eb-9ebf8deb0fc6">
-    <br /><br />
 </div>
 
+## Test results
+<div>
+    <img width="607" alt="Captura de pantalla 2024-09-28 a las 10 53 53 a  m" src="https://github.com/user-attachments/assets/2c817bbc-a0b6-44f9-b4eb-9ebf8deb0fc6">
+</div>
+
+## Screenshots
 | 엘리베이터 O | 엘리베이터 X         |
 | :-------- | :------- |
 | ![Captura de pantalla 2024-09-18 a las 1 36 05 p  m](https://github.com/user-attachments/assets/2a459546-b5d8-436f-9dd9-5f0d4f8db65a) | ![Captura de pantalla 2024-09-18 a las 1 36 12 p  m](https://github.com/user-attachments/assets/cf52815e-8a82-48f6-8b21-845690f903b5) |
